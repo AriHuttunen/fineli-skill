@@ -20,13 +20,13 @@ Data is licensed CC-BY 4.0 — always attribute: "Source: Finnish Institute for 
 
 ## Workflow
 
-**Always use `fineli.py`** (in this skill's directory) instead of calling the API directly.
+**Always use `scripts/fineli.py`** (in this skill's directory) instead of calling the API directly.
 The script handles all API requests, JSON parsing, and formatting.
 
 ### For macro questions ("how much protein in quinoa?")
 
 ```
-python3 fineli.py search "quinoa"
+python3 scripts/fineli.py search "quinoa"
 ```
 
 Pick the best match from the output and present the relevant values.
@@ -36,17 +36,17 @@ Prefer raw/unprocessed items for ingredients, cooked items if the user specifies
 
 1. Search to find the food ID:
    ```
-   python3 fineli.py search "quinoa"
+   python3 scripts/fineli.py search "quinoa"
    ```
 2. Get the specific nutrient:
    ```
-   python3 fineli.py detail <id> --nutrient iron
+   python3 scripts/fineli.py detail <id> --nutrient iron
    ```
 
 ### For comparisons ("compare oats and rice")
 
 ```
-python3 fineli.py compare "oats" "rice"
+python3 scripts/fineli.py compare "oats" "rice"
 ```
 
 ### Options

@@ -1,30 +1,39 @@
-# Fineli Skill for Claude Code
+# Fineli Skill for Claude
 
-A Claude Code skill for querying nutritional data from [Fineli](https://fineli.fi), Finland's national food composition database maintained by THL (Finnish Institute for Health and Welfare).
+Look up nutritional data from [Fineli](https://fineli.fi), Finland's national food composition database maintained by THL (Finnish Institute for Health and Welfare) — directly from Claude.
 
-## What It Does
+Ask things like "how much protein in quinoa?", "compare oats and rice", or "how much vitamin D is in milk?" and get accurate data from Fineli without leaving the conversation.
 
-This skill enables Claude Code to answer questions about food nutrition by querying the Fineli API. It can:
+## Skill files
 
-- Look up macronutrients (protein, fat, carbohydrates, fiber, calories) for any food
-- Retrieve detailed micronutrient data (vitamins, minerals, fatty acids)
-- Compare nutritional content across different foods
-- Handle Finnish, English, and Swedish food names
-- Identify special diet suitability (gluten-free, vegan, lactose-free, etc.)
+The installable skill lives in the `fineli/` subdirectory:
 
-All nutritional values are per 100g edible portion.
+```
+fineli/
+├── SKILL.md          # Skill instructions
+└── scripts/
+    └── fineli.py     # API query script (Python 3, stdlib only)
+```
 
 ## Setup
 
-### Network Access Required
+### 1. Install the skill
 
-Add `fineli.fi` to **Additional allowed domains** in:
-- **Claude Code**: Settings → Network → Additional allowed domains
-- **Claude Desktop**: Settings → Network → Additional allowed domains
+Download or clone this repo, then zip and upload the `fineli/` subdirectory manually:
 
-### Installation
+1. Zip the `fineli/` folder
+2. Open Claude.ai → Settings → Capabilities → Skills
+3. Upload the zip
 
-Copy `SKILL.md` and `fineli.py` to your Claude Code skills directory. Ensure Python 3 is available on your PATH (no pip dependencies required).
+For Claude Code, copy the `fineli/` folder to your skills directory instead.
+
+### 2. Allow network access
+
+Add `fineli.fi` to **Additional allowed domains** in your Claude settings (Settings > Network).
+
+## Requirements
+
+Python 3 (stdlib only — no pip dependencies needed).
 
 ## Data Source
 
@@ -32,18 +41,10 @@ All data comes from the Fineli database, licensed under CC-BY 4.0.
 
 **Attribution**: Source: Finnish Institute for Health and Welfare, Fineli
 
-## Example Queries
-
-- "How much protein is in quinoa?"
-- "What are the macros for salmon?"
-- "Compare the nutritional content of oats and rice"
-- "How much vitamin D is in milk?"
-
 ## Disclaimer
 
-**This tool is provided as-is with no guarantees of accuracy or correctness.** Nutritional data is retrieved from the Fineli database and may contain errors, be outdated, or be misinterpreted. Always verify critical nutritional information with authoritative sources. The authors assume no liability for decisions made based on this data.
+This tool is provided as-is with no guarantees of accuracy or correctness. Nutritional data is retrieved from the Fineli database and may contain errors, be outdated, or be misinterpreted. Always verify critical nutritional information with authoritative sources.
 
-## Files
+## License
 
-- `SKILL.md` — Skill specification and workflow instructions
-- `fineli.py` — CLI helper that queries the Fineli API and outputs formatted results (Python 3, stdlib only)
+See [LICENSE](LICENSE).
