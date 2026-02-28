@@ -24,7 +24,7 @@ Add `fineli.fi` to **Additional allowed domains** in:
 
 ### Installation
 
-Copy `SKILL.md` and `components-mapping.json` to your Claude Code skills directory.
+Copy `SKILL.md` and `fineli.py` to your Claude Code skills directory. Ensure Python 3 is available on your PATH (no pip dependencies required).
 
 ## Data Source
 
@@ -45,5 +45,5 @@ All data comes from the Fineli database, licensed under CC-BY 4.0.
 
 ## Files
 
-- `SKILL.md` — Skill specification and API documentation
-- `components-mapping.json` — Maps Fineli's nutrient array positions to human-readable names
+- `SKILL.md` — Skill specification and workflow instructions
+- `fineli.py` — CLI helper that queries the Fineli API and outputs formatted results (Python 3, stdlib only)
