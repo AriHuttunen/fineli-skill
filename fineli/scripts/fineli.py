@@ -18,7 +18,7 @@ DEFAULT_TOP = 5
 ATTRIBUTION = "Source: Finnish Institute for Health and Welfare, Fineli"
 
 # Nutrient component mapping — positional index in the /foods/{id} data array.
-# Verified against fineli.fi. See components-mapping.json for reference.
+# Verified against fineli.fi.
 COMPONENTS = [
     (0,  "Energy",                              "kJ",  "macro"),
     (1,  "Fat, total",                          "g",   "macro"),
@@ -111,7 +111,7 @@ def api_get(path, params=None):
         url += "?" + urllib.parse.urlencode(params)
     req = urllib.request.Request(url, headers={"User-Agent": "fineli-skill/1.0"})
     try:
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        with urllib.request.urlopen(req, timeout=60) as resp:
             return json.loads(resp.read().decode())
     except urllib.error.HTTPError as e:
         if e.code == 404:
@@ -266,7 +266,7 @@ def format_nutrient_profile(food, lang=DEFAULT_LANG, nutrient_filter=None):
     return "\n".join(lines)
 
 
-def format_comparison(term1, food1, term2, food2, lang=DEFAULT_LANG):
+def format_comparison(food1, food2, lang=DEFAULT_LANG):
     name1 = food_name(food1, lang)
     name2 = food_name(food2, lang)
 
@@ -276,7 +276,6 @@ def format_comparison(term1, food1, term2, food2, lang=DEFAULT_LANG):
 
     lines = [
         f"Comparison: {name1} vs {name2}",
-        f'Selected: "{name1}" for "{term1}", "{name2}" for "{term2}"',
         "All values per 100 g.",
         "",
         f"  {'Nutrient':<24} {col1:>20} {col2:>20}",
@@ -325,40 +324,38 @@ def cmd_detail(args):
 
 
 def cmd_compare(args):
-    foods1 = search_foods(args.term1, args.lang)
-    foods2 = search_foods(args.term2, args.lang)
-
-    if not foods1:
-        print(f'No results found for "{args.term1}".', file=sys.stderr)
-        sys.exit(1)
-    if not foods2:
-        print(f'No results found for "{args.term2}".', file=sys.stderr)
-        sys.exit(1)
-
-    print(format_comparison(args.term1, foods1[0], args.term2, foods2[0], args.lang))
+    food1 = get_food_detail(args.id1)
+    food2 = get_food_detail(args.id2)
+    print(format_comparison(food1, food2, args.lang))
 
 
 # ── CLI ──────────────────────────────────────────────────────────────────────
 
 
+def _add_lang(p):
+    p.add_argument("--lang", default=DEFAULT_LANG, choices=["en", "fi", "sv"])
+
+
 def main():
     parser = argparse.ArgumentParser(description="Query Fineli food composition data.")
-    parser.add_argument("--lang", default=DEFAULT_LANG, choices=["en", "fi", "sv"])
     sub = parser.add_subparsers(dest="command", required=True)
 
     p_search = sub.add_parser("search", help="Search foods by name")
     p_search.add_argument("term")
     p_search.add_argument("--top", type=int, default=DEFAULT_TOP)
+    _add_lang(p_search)
     p_search.set_defaults(func=cmd_search)
 
     p_detail = sub.add_parser("detail", help="Full nutrient profile by food ID")
     p_detail.add_argument("id", type=int)
     p_detail.add_argument("--nutrient", help="Filter to a specific nutrient (substring match)")
+    _add_lang(p_detail)
     p_detail.set_defaults(func=cmd_detail)
 
-    p_compare = sub.add_parser("compare", help="Compare two foods side by side")
-    p_compare.add_argument("term1")
-    p_compare.add_argument("term2")
+    p_compare = sub.add_parser("compare", help="Compare two foods by ID")
+    p_compare.add_argument("id1", type=int)
+    p_compare.add_argument("id2", type=int)
+    _add_lang(p_compare)
     p_compare.set_defaults(func=cmd_compare)
 
     args = parser.parse_args()

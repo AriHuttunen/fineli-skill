@@ -5,7 +5,7 @@ description: "Look up food composition data from Fineli, Finland's national food
 
 # Fineli — Finnish Food Composition Database
 
-## ⚠️ Requirements
+## Requirements
 
 **Network Access**: This skill requires network access to `fineli.fi`.
 
@@ -18,36 +18,52 @@ Add `fineli.fi` to **Additional allowed domains** in:
 Query food composition data from Fineli (fineli.fi), maintained by THL.
 Data is licensed CC-BY 4.0 — always attribute: "Source: Finnish Institute for Health and Welfare, Fineli"
 
+## Important: Always Let the User Choose
+
+**Never auto-pick a food when multiple search results are returned.** Always present the numbered list to the user and ask them to choose. The only exception is when a search returns exactly one result.
+
 ## Workflow
 
-**Always use `scripts/fineli.py`** (in this skill's directory) instead of calling the API directly.
-The script handles all API requests, JSON parsing, and formatting.
+**Always use `scripts/fineli.py`** (in this skill's directory).
 
 ### For macro questions ("how much protein in quinoa?")
 
-```
-python3 scripts/fineli.py search "quinoa"
-```
-
-Pick the best match from the output and present the relevant values.
-Prefer raw/unprocessed items for ingredients, cooked items if the user specifies.
-
-### For micronutrient questions ("how much iron in quinoa?")
-
-1. Search to find the food ID:
+1. Search:
    ```
    python3 scripts/fineli.py search "quinoa"
    ```
-2. Get the specific nutrient:
+2. Present the numbered results to the user and ask which one they mean.
+3. If only one result, you may proceed directly — the macros are already in the search output.
+4. If the user wants more detail, use `detail` with the chosen ID.
+
+### For micronutrient questions ("how much iron in quinoa?")
+
+1. Search to find matching foods:
+   ```
+   python3 scripts/fineli.py search "quinoa"
+   ```
+2. Present the results and ask the user to pick one.
+3. Get the specific nutrient for the chosen food:
    ```
    python3 scripts/fineli.py detail <id> --nutrient iron
    ```
 
 ### For comparisons ("compare oats and rice")
 
-```
-python3 scripts/fineli.py compare "oats" "rice"
-```
+1. Search for the first food:
+   ```
+   python3 scripts/fineli.py search "oats"
+   ```
+2. Present results and ask the user to pick one.
+3. Search for the second food:
+   ```
+   python3 scripts/fineli.py search "rice"
+   ```
+4. Present results and ask the user to pick one.
+5. Compare using the two chosen IDs:
+   ```
+   python3 scripts/fineli.py compare <id1> <id2>
+   ```
 
 ### Options
 
